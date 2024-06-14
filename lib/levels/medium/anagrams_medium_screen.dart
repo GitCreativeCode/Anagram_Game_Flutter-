@@ -2,6 +2,7 @@ import 'package:anagrams/levels/medium/anagrams_medium_input.dart';
 import 'package:anagrams/levels/medium/anagrams_medium_appbar.dart';
 import 'package:anagrams/levels/medium/anagrams_medium_word.dart';
 import 'package:anagrams/levels/id_service.dart';
+import 'package:anagrams/levels/medium/score_medium_progress.dart';
 import 'package:flutter/material.dart';
 
 class AnagramsMediumScreen extends StatefulWidget {
@@ -33,9 +34,16 @@ class _AnagramsMediumScreenState extends State<AnagramsMediumScreen> {
     return Scaffold(
       appBar: AnagramsMediumAppbar(),
       body: currentId == null
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: const Align(
+                    alignment: Alignment.topRight,
+                    child: ScoreProgress(),
+                  ),
+                ),
                 Expanded(
                   flex: 1,
                   child: AnagramsMediumWord(id: currentId!),
@@ -44,9 +52,9 @@ class _AnagramsMediumScreenState extends State<AnagramsMediumScreen> {
                   flex: 2,
                   child: AnagramsMediumInput(id: currentId!),
                 ),
+                
               ],
             ),
     );
   }
 }
-

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'score_medium_progress.dart';
 
 class AnagramsMediumInput extends StatefulWidget {
   final int id;
@@ -14,6 +15,7 @@ class _AnagramsMediumInputState extends State<AnagramsMediumInput> {
   final TextEditingController _controller = TextEditingController();
   String _message = '';
   List<String> _solution = [];
+  Set<String> _correctAnswers = {};
 
   @override
   void initState() {
@@ -31,22 +33,34 @@ class _AnagramsMediumInputState extends State<AnagramsMediumInput> {
   }
 
   void _checkSolution() {
-    if (_controller.text.isEmpty ||
-        !_solution.contains(_controller.text.toLowerCase())) {
+    String userAnswer = _controller.text.toLowerCase();
+
+    if (userAnswer.isEmpty || !_solution.contains(userAnswer)) {
       setState(() {
         _message = 'Wrong word/invalid word';
+      });
+    } else if (_correctAnswers.contains(userAnswer)) {
+      setState(() {
+        _message = 'You already got this word!';
       });
     } else {
       setState(() {
         _message = 'Correct solution!';
+        _correctAnswers.add(userAnswer);
+        _updateScore(userAnswer);
         _controller.clear();
       });
-      Future.delayed(Duration(seconds: 2), () {
+      Future.delayed(const Duration(seconds: 2), () {
         setState(() {
           _message = '';
         });
       });
     }
+  }
+
+  void _updateScore(String word) {
+    int newScore = word.length * 25;
+    ScoreProgress.scoreNotifier.value += newScore;
   }
 
   @override
@@ -56,7 +70,7 @@ class _AnagramsMediumInputState extends State<AnagramsMediumInput> {
         children: [
           TextField(
             controller: _controller,
-            decoration: InputDecoration(
+            decoration: const InputDecoration(
               border: OutlineInputBorder(),
               hintText: 'Enter A Word',
             ),
