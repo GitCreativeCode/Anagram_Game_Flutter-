@@ -5,7 +5,11 @@ import 'score_medium_progress.dart';
 
 class AnagramsMediumInput extends StatefulWidget {
   final int id;
-  const AnagramsMediumInput({Key? key, required this.id}) : super(key: key);
+  final Function(int) onWordSubmitted;
+
+  const AnagramsMediumInput(
+      {Key? key, required this.id, required this.onWordSubmitted})
+      : super(key: key);
 
   @override
   State<AnagramsMediumInput> createState() => _AnagramsMediumInputState();
@@ -61,38 +65,37 @@ class _AnagramsMediumInputState extends State<AnagramsMediumInput> {
   void _updateScore(String word) {
     int newScore = word.length * 25;
     ScoreProgress.scoreNotifier.value += newScore;
+    widget.onWordSubmitted(newScore);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Column(
-        children: [
-          TextField(
-            controller: _controller,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              hintText: 'Enter A Word',
-            ),
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done,
-            textAlign: TextAlign.left,
-            maxLines: 1,
+    return Column(
+      children: [
+        TextField(
+          controller: _controller,
+          decoration: const InputDecoration(
+            border: OutlineInputBorder(),
+            hintText: 'Enter A Word',
           ),
-          Text(_message),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: TextButton(
-                  onPressed: _checkSolution,
-                  child: const Text('Submit'),
-                ),
+          keyboardType: TextInputType.text,
+          textInputAction: TextInputAction.done,
+          textAlign: TextAlign.left,
+          maxLines: 1,
+        ),
+        Text(_message),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: _checkSolution,
+                child: const Text('Submit'),
               ),
-            ],
-          ),
-        ],
-      ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

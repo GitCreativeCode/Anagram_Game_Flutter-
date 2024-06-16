@@ -1,6 +1,7 @@
 import 'package:anagrams/levels/easy/anagrams_easy_screen.dart';
 import 'package:anagrams/levels/hard/anagrams_hard_screen.dart';
 import 'package:anagrams/levels/medium/anagrams_medium_screen.dart';
+import 'package:anagrams/levels/medium/countdown_screen.dart';
 import 'package:flutter/material.dart';
 
 class AnagramsLevels extends StatefulWidget {
@@ -35,10 +36,21 @@ class _AnagramsLevelsState extends State<AnagramsLevels> {
                   },
                   child: const Text('Easy'),
                 ),
+                // TextButton(
+                //   onPressed: () {
+                //     Navigator.of(context).push(MaterialPageRoute(
+                //         builder: (context) => AnagramsMediumScreen(
+                //               onScoreUpdate: (score) {
+                //                 // Handle score update if needed
+                //               },
+                //             )));
+                //   },
+                //   child: const Text('Medium'),
+                // ),
                 TextButton(
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const AnagramsMediumScreen()));
+                        builder: (context) => CountdownScreen()));
                   },
                   child: const Text('Medium'),
                 ),
