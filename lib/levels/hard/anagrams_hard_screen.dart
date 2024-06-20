@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'anagrams_hard_appbar.dart';
 
 class AnagramsHardScreen extends StatefulWidget {
   const AnagramsHardScreen({super.key});
@@ -10,8 +11,9 @@ class AnagramsHardScreen extends StatefulWidget {
 class _AnagramsHardScreenState extends State<AnagramsHardScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      
+    return Scaffold(
+      appBar: AnagramsHardAppbar(),
+      body: Text('Did i not say to open this? >('),
     );
   }
 }

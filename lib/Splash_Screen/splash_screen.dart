@@ -10,7 +10,7 @@ class Splashscreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedSplashScreen(
-      splash: "assets/images/Icon_App_1_7.jpeg",
+      splash: "assets/images/Anagram_Logo.jpg",
       nextScreen: const AnagramsScreen(),
       splashTransition: SplashTransition.scaleTransition,
       pageTransitionType: PageTransitionType.fade,

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:anagrams/levels/id_service.dart';
+import 'package:anagrams/levels/medium/countdown_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'anagrams_medium_input.dart';
@@ -9,12 +10,8 @@ import 'score_medium_progress.dart';
 
 class AnagramsMediumScreen extends StatefulWidget {
   final Function(int) onScoreUpdate;
-  //final VoidCallback onTimeUp;
 
-  const AnagramsMediumScreen(
-      // {Key? key, required this.onScoreUpdate, required this.onTimeUp})
-      {Key? key,
-      required this.onScoreUpdate})
+  const AnagramsMediumScreen({Key? key, required this.onScoreUpdate})
       : super(key: key);
 
   @override
@@ -25,7 +22,7 @@ class _AnagramsMediumScreenState extends State<AnagramsMediumScreen> {
   int? currentId;
   int _score = 0;
   late Timer _timer;
-  int _remainingTime = 60;
+  int _remainingTime = 10;
   int _highScore = 0;
 
   @override
@@ -47,28 +44,44 @@ class _AnagramsMediumScreenState extends State<AnagramsMediumScreen> {
   void _startTimer() {
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_remainingTime > 0) {
-        setState(() {
-          _remainingTime--;
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          if (mounted) {
+            setState(() {
+              _remainingTime--;
+            });
+          }
         });
       } else {
         _timer.cancel();
-        widget.onScoreUpdate(_score);
-        _showEndDialog();
-        //widget.onTimeUp();
+        WidgetsBinding.instance?.addPostFrameCallback((_) {
+          if (mounted) {
+            widget.onScoreUpdate(_score);
+            _showEndDialog();
+          }
+        });
       }
     });
   }
 
   void _updateScore(int score) {
-    setState(() {
-      _score += score;
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _score += score;
+          ScoreProgress.scoreNotifier.value = _score; // Update score notifier
+        });
+      }
     });
   }
 
   Future<void> _loadHighScore() async {
     final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _highScore = prefs.getInt('highScore') ?? 0;
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (mounted) {
+        setState(() {
+          _highScore = prefs.getInt('highScore') ?? 0;
+        });
+      }
     });
   }
 
@@ -76,46 +89,52 @@ class _AnagramsMediumScreenState extends State<AnagramsMediumScreen> {
     final prefs = await SharedPreferences.getInstance();
     if (_score > _highScore) {
       await prefs.setInt('highScore', _score);
-      setState(() {
-        _highScore = _score;
+      WidgetsBinding.instance?.addPostFrameCallback((_) {
+        if (mounted) {
+          setState(() {
+            _highScore = _score;
+          });
+        }
       });
     }
   }
 
   void _showEndDialog() {
     _updateHighScore();
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Game Over'),
-          content: Text('Your Score: $_score\nHigh Score: $_highScore'),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Restart'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => AnagramsMediumScreen(
-                      onScoreUpdate: widget.onScoreUpdate,
-                    ),
-                  ),
-                );
-              },
-            ),
-            TextButton(
-              child: const Text('Go Back'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                Navigator.pop(context);
-              },
-            ),
-          ],
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Game Over'),
+              content: Text('Your Score: $_score\nHigh Score: $_highScore'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Restart'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CountdownScreen(),  // Navigate to CountdownScreen
+                      ),
+                    );
+                  },
+                ),
+                TextButton(
+                  child: const Text('Go Back'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
         );
-      },
-    );
+      }
+    });
   }
 
   @override

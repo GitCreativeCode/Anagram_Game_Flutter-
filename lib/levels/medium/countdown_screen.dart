@@ -14,6 +14,14 @@ class _CountdownScreenState extends State<CountdownScreen> {
   int _currentScore = 0;
   int _highScore = 0;
   bool _isDisposed = false;
+  bool _isPressed = false;
+
+  // This function is called when the button gets pressed
+  void _myCallback() {
+    setState(() {
+      _isPressed = true;
+    });
+  }
 
   @override
   void initState() {
@@ -147,13 +155,21 @@ class _CountdownScreenState extends State<CountdownScreen> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _startCountdown,
+              onPressed: _isPressed == false
+                  ? () {
+                      setState(() {
+                        _isPressed = true; // This will disable the button.
+                      });
+                      _startCountdown(); // This will start the countdown.
+                    }
+                  : null,
               child: const Text('Start'),
             ),
             if (_showCountdown)
               Text(
                 _countdownText,
-                style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
           ],
         ),
